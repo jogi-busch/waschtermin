@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Meine Termine – Waschtermin{% endblock %}
+{% block content %}
+<h1>{{ g.wash.name }}</h1>
+
+{% if not active %}
+  <div class="flash error">Dein Abo ist nicht aktiv – deine Termine sind für Autofahrer unsichtbar.
+    <a href="{{ url_for('wash_subscription') }}">Jetzt aktivieren</a></div>
+{% endif %}
+
+<div class="card">
+  <h2>Freie Termine anlegen</h2>
+  <form method="post" action="{{ url_for('wash_create_slots') }}" class="form">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <div class="row">
+      <label>Datum <input type="date" name="date" min="{{ today }}" value="{{ today }}" required></label>
+      <label>Von <input type="time" name="time_from" value="08:00" required></label>
+      <label>Bis <input type="time" name="time_to" value="12:00" required></label>
+    </div>
+    <div class="row">
+      <label>Dauer pro Termin (Min.) <input type="number" name="duration" value="30" min="5" max="240" required></label>
+      <label>Waschplätze parallel <input type="number" name="bays" value="1" min="1" max="20"></label>
+      <label>Preis (€) <input name="price" value="12,00" required></label>
+    </div>
+    <label>Leistung
+      <select name="service">{% for s in SERVICES %}<option>{{ s }}</option>{% endfor %}</select></label>
+    <button class="btn">Termine anlegen</button>
+  </form>
+</div>
+
+<h2>Anstehende Termine</h2>
+{% if slots %}
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Zeit</th><th>Leistung</th><th>Preis</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for s in slots %}
+    <tr>
+      <td>{{ s.start_time | dt }} ({{ s.duration_min }} Min.)</td>
+      <td>{{ s.service }}</td>
+      <td>{{ s.price_cents | euro }}</td>
+      <td>
+        {% if s.booking_id %}
+          <strong>Gebucht</strong> von {{ s.driver_name }} ({{ s.driver_email }}){% if s.car_note %} – {{ s.car_note }}{% endif %}
+        {% else %}Frei{% endif %}
+      </td>
+      <td>
+        {% if s.booking_id %}
+          <form method="post" action="{{ url_for('wash_cancel_booking', booking_id=s.booking_id) }}" class="inline">
+            <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+            <button class="btn small danger">Buchung stornieren</button>
+          </form>
+        {% else %}
+          <form method="post" action="{{ url_for('wash_delete_slot', slot_id=s.id) }}" class="inline">
+            <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+            <button class="btn small ghost">Löschen</button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+  <p class="muted">Noch keine Termine angelegt.</p>
+{% endif %}
+
+<details class="card">
+  <summary>Profil bearbeiten</summary>
+  <form method="post" action="{{ url_for('wash_profile') }}" class="form">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <label>Name <input name="name" value="{{ g.wash.name }}" required></label>
+    <label>Straße <input name="street" value="{{ g.wash.street }}" required></label>
+    <div class="row">
+      <label>PLZ <input name="zip" value="{{ g.wash.zip }}" required></label>
+      <label>Ort <input name="city" value="{{ g.wash.city }}" required></label>
+    </div>
+    <label>Beschreibung <textarea name="description" rows="3">{{ g.wash.description }}</textarea></label>
+    <button class="btn">Speichern</button>
+  </form>
+</details>
+{% endblock %}

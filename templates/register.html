@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Registrieren – Waschtermin{% endblock %}
+{% block content %}
+<h1>{{ 'Waschstraße registrieren' if role == 'wash' else 'Als Autofahrer registrieren' }}</h1>
+<form method="post" class="form">
+  <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+  <label>{{ 'Name der Waschstraße' if role == 'wash' else 'Dein Name' }}
+    <input name="name" required value="{{ form.get('name', '') }}"></label>
+  <label>E-Mail
+    <input type="email" name="email" required value="{{ form.get('email', '') }}"></label>
+  <label>Passwort (mind. 8 Zeichen)
+    <input type="password" name="password" required minlength="8"></label>
+  {% if role == 'wash' %}
+    <label>Straße und Hausnummer <input name="street" required value="{{ form.get('street', '') }}"></label>
+    <div class="row">
+      <label>PLZ <input name="zip" required value="{{ form.get('zip', '') }}"></label>
+      <label>Ort <input name="city" required value="{{ form.get('city', '') }}"></label>
+    </div>
+    <label>Beschreibung (optional)
+      <textarea name="description" rows="3">{{ form.get('description', '') }}</textarea></label>
+  {% endif %}
+  <button class="btn">Konto anlegen</button>
+  <p class="muted">Schon registriert? <a href="{{ url_for('login') }}">Anmelden</a></p>
+</form>
+{% endblock %}

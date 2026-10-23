@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Freie Waschtermine, sofort gebucht.</h1>
+  <p>Waschstraßen veröffentlichen ihre freien Zeiten, Autofahrer suchen und buchen – alles an einem Ort.</p>
+</section>
+<div class="cards two">
+  <div class="card">
+    <h2>Für Autofahrer</h2>
+    <p>Kostenlos. Suche freie Termine in deiner Nähe und buche mit einem Klick.</p>
+    <a class="btn" href="{{ url_for('register', role='driver') }}">Als Autofahrer registrieren</a>
+  </div>
+  <div class="card">
+    <h2>Für Waschstraßen</h2>
+    <p>Verwalte deine Termine komplett online. Monatlicher Beitrag: <strong>{{ fee | euro }}</strong>.</p>
+    <a class="btn" href="{{ url_for('register', role='wash') }}">Waschstraße anmelden</a>
+  </div>
+</div>
+{% endblock %}

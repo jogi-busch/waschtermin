@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Meine Buchungen – Waschtermin{% endblock %}
+{% block content %}
+<h1>Meine Buchungen</h1>
+{% for r in rows %}
+<div class="card slot {{ 'faded' if r.status != 'confirmed' else '' }}">
+  <div>
+    <h3>{{ r.start_time | dt }}</h3>
+    <p><strong>{{ r.wash_name }}</strong> · {{ r.street }}, {{ r.zip }} {{ r.city }}</p>
+    <p>{{ r.service }} · {{ r.duration_min }} Min. · {{ r.price_cents | euro }}{% if r.car_note %} · {{ r.car_note }}{% endif %}</p>
+    {% if r.status == 'cancelled_by_driver' %}<p class="muted">Von dir storniert</p>
+    {% elif r.status == 'cancelled_by_wash' %}<p class="warn-text">Von der Waschstraße storniert</p>
+    {% elif r.start_time < now %}<p class="muted">Vergangen</p>{% endif %}
+  </div>
+  {% if r.status == 'confirmed' and r.start_time > now %}
+  <form method="post" action="{{ url_for('cancel_booking', booking_id=r.id) }}">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <button class="btn small danger">Stornieren</button>
+  </form>
+  {% endif %}
+</div>
+{% else %}
+  <p class="muted">Noch keine Buchungen. <a href="{{ url_for('search') }}">Jetzt Termin suchen</a></p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Abo – Waschtermin{% endblock %}
+{% block content %}
+<h1>Abonnement</h1>
+<div class="card">
+  <p>Monatlicher Beitrag: <strong>{{ fee | euro }}</strong></p>
+  {% if active %}
+    <p class="ok-text">✔ Aktiv bis {{ g.wash.subscription_until | dt }}. Deine freien Termine sind für Autofahrer sichtbar.</p>
+  {% else %}
+    <p class="warn-text">Dein Abo ist nicht aktiv. Ohne aktives Abo sind deine Termine für Autofahrer nicht sichtbar und nicht buchbar.</p>
+  {% endif %}
+  {% if demo %}
+    <p class="muted">Demo-Modus: Es wird keine echte Zahlung ausgelöst.</p>
+  {% endif %}
+  <form method="post" action="{{ url_for('wash_pay') }}">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <button class="btn">{{ 'Um 30 Tage verlängern' if active else 'Abo jetzt aktivieren' }}</button>
+  </form>
+</div>
+{% endblock %}

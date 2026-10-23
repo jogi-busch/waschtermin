@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Anmelden – Waschtermin{% endblock %}
+{% block content %}
+<h1>Anmelden</h1>
+<form method="post" class="form">
+  <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+  <label>E-Mail <input type="email" name="email" required autofocus></label>
+  <label>Passwort <input type="password" name="password" required></label>
+  <button class="btn">Anmelden</button>
+  <p class="muted">Noch kein Konto?
+    <a href="{{ url_for('register', role='driver') }}">Autofahrer</a> ·
+    <a href="{{ url_for('register', role='wash') }}">Waschstraße</a></p>
+</form>
+{% endblock %}

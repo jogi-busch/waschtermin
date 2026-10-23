@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Termin suchen – Waschtermin{% endblock %}
+{% block content %}
+<h1>Freie Waschtermine</h1>
+<form method="get" class="filters">
+  <input name="q" placeholder="Ort, PLZ oder Name" value="{{ q }}">
+  <input type="date" name="date" min="{{ today }}" value="{{ date }}">
+  <select name="service">
+    <option value="">Alle Leistungen</option>
+    {% for s in SERVICES %}<option {{ 'selected' if s == service }}>{{ s }}</option>{% endfor %}
+  </select>
+  <button class="btn">Suchen</button>
+</form>
+
+{% for s in slots %}
+<div class="card slot">
+  <div>
+    <h3>{{ s.start_time | dt }}</h3>
+    <p><strong>{{ s.wash_name }}</strong> · {{ s.street }}, {{ s.zip }} {{ s.city }}</p>
+    <p>{{ s.service }} · {{ s.duration_min }} Min. · <strong>{{ s.price_cents | euro }}</strong></p>
+    {% if s.description %}<p class="muted">{{ s.description }}</p>{% endif %}
+  </div>
+  <form method="post" action="{{ url_for('book', slot_id=s.id) }}" class="form">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <input name="car_note" maxlength="100" placeholder="Kennzeichen / Hinweis (optional)">
+    <button class="btn">Buchen</button>
+  </form>
+</div>
+{% else %}
+  <p class="muted">Keine freien Termine gefunden. Probiere einen anderen Ort oder ein anderes Datum.</p>
+{% endfor %}
+{% endblock %}
