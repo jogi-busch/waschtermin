@@ -117,7 +117,7 @@
 
   <section class="tile price">
     <h2>{{ t('home.wash_h') }}</h2>
-    <p class="amount">{{ fee | euro }}<small>{{ t('home.per_month') }}</small></p>
+    <p class="amount">{{ fee | feeprice }}<small>{{ t('home.per_month') }}</small></p>
     <p>{{ t('home.wash_p') }}</p>
     <a class="btn" href="{{ url_for('register', role='wash') }}">{{ t('home.cta_register_wash') }}</a>
   </section>

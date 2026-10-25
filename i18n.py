@@ -87,6 +87,7 @@ _T = {
                    "✔ {date} дейін белсенді. Бос уақыттарыңыз жүргізушілерге көрінеді."),
     "sub.inactive": ("Dein Abo ist nicht aktiv. Ohne aktives Abo sind deine Termine für Autofahrer nicht sichtbar und nicht buchbar.",
                      "Жазылымыңыз белсенді емес. Белсенді жазылымсыз уақыттарыңыз жүргізушілерге көрінбейді және брондалмайды."),
+    "sub.billed_eur": ("", "Есептеу еуромен жүргізіледі: айына {eur}. Басқа валютадағы сома — шамамен."),
     "sub.demo": ("Demo-Modus: Es wird keine echte Zahlung ausgelöst.", "Демо режимі: нақты төлем жасалмайды."),
     "sub.extend": ("Um 30 Tage verlängern", "30 күнге ұзарту"),
     "sub.activate": ("Abo jetzt aktivieren", "Жазылымды қазір қосу"),

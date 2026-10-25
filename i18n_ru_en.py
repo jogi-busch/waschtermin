@@ -73,6 +73,7 @@ EXTRA = {
                    "✔ Active until {date}. Your free slots are visible to drivers."),
     "sub.inactive": ("Подписка не активна. Без активной подписки ваше время не видно водителям и недоступно для брони.",
                      "Your subscription is not active. Without an active subscription your slots are not visible to drivers and cannot be booked."),
+    "sub.billed_eur": ("Оплата в евро: {eur} в месяц. Сумма в другой валюте — ориентировочная.", "Billed in euros: {eur} per month. The amount in other currencies is approximate."),
     "sub.demo": ("Демо-режим: реальный платёж не выполняется.", "Demo mode: no real payment is made."),
     "sub.extend": ("Продлить на 30 дней", "Extend by 30 days"),
     "sub.activate": ("Активировать подписку", "Activate subscription"),

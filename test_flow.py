@@ -135,7 +135,7 @@ ru = client(); ru.get("/sprache/ru")
 check("Startseite auf Russisch", "Свободные места на мойку" in ru.get("/").text)
 en = client(); en.get("/sprache/en")
 page = en.get("/").text
-check("Startseite auf Englisch", "Free car wash slots, booked instantly." in page and "€29.00" in page)
+check("Startseite auf Englisch", "Free car wash slots, booked instantly." in page and "≈\u00a0$66" in page)
 r = post(en, "/registrieren/driver", dict(name="Sam", email="sam@example.com", password="x"))
 check("Englische Fehlermeldung", "at least 8 characters" in r.text)
 from i18n import TRANSLATIONS, LANGS

@@ -22,12 +22,20 @@ app.config.update(
     SECRET_KEY=os.environ.get("SECRET_KEY", "dev-nur-lokal-aendern"),
     DATABASE=os.environ.get("DATABASE", os.path.join(BASE_DIR, "waschtermin.db")),
     # Monatsbeitrag für Waschstraßen in Cent
-    MONTHLY_FEE_CENTS=int(os.environ.get("MONTHLY_FEE_CENTS", "2900")),
+    MONTHLY_FEE_CENTS=int(os.environ.get("MONTHLY_FEE_CENTS", "5900")),
     # "demo" = Zahlung wird nur simuliert. Für Echtbetrieb Zahlungsanbieter anbinden (siehe README).
     PAYMENT_MODE=os.environ.get("PAYMENT_MODE", "demo"),
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
 )
+
+# Anzeige des Monatsbeitrags in der Währung der Sprache (nur zur Orientierung, abgerechnet wird in Euro).
+# Kurse vom 25.10.2026; bei Bedarf hier anpassen: (Zeichen, Einheiten pro 1 EUR, Rundung, Symbol vorne?)
+FEE_CURRENCIES = {
+    "kk": ("₸", 505.16, 100, False),
+    "ru": ("₽", 90.28, 10, False),
+    "en": ("$", 1.1202, 1, True),
+}
 
 SERVICES = ["Basiswäsche", "Komfortwäsche", "Premiumwäsche", "Innenreinigung", "Handwäsche"]
 
@@ -135,6 +143,18 @@ def reset_session():
     session.clear()
     if lang in LANGS:
         session["lang"] = lang
+
+
+@app.template_filter("feeprice")
+def fee_price(cents):
+    """Monatsbeitrag: in Deutsch als Euro, sonst als gerundeter Näherungswert in der Landeswährung."""
+    lang = g.get("lang", "de")
+    if lang not in FEE_CURRENCIES:
+        return euro(cents)
+    symbol, rate, step, before = FEE_CURRENCIES[lang]
+    value = int(round(cents / 100 * rate / step)) * step
+    num = f"{value:,}".replace(",", "\u00a0")
+    return f"≈\u00a0{symbol}{num}" if before else f"≈\u00a0{num}\u00a0{symbol}"
 
 
 @app.template_filter("dt")
