@@ -1,6 +1,7 @@
 """Russische und englische Texte: Schlüssel -> (Russisch, Englisch)."""
 
 EXTRA = {
+    "brand": ("Запись на мойку", "Wash Booking"),
     "nav.login": ("Войти", "Log in"),
     "nav.logout": ("Выйти", "Log out"),
     "nav.my_slots": ("Моё расписание", "My schedule"),

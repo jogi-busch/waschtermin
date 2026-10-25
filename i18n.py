@@ -9,6 +9,7 @@ LANGS = ("de", "kk", "ru", "en")
 LANG_NAMES = {"de": "Deutsch", "kk": "Қазақша", "ru": "Русский", "en": "English"}
 
 _T = {
+    "brand": ("Waschtermin", "Жууға жазылу"),
     # --- Navigation / Rahmen -------------------------------------------------
     "nav.login": ("Anmelden", "Кіру"),
     "nav.logout": ("Abmelden", "Шығу"),
@@ -196,6 +197,13 @@ from i18n_ru_en import EXTRA  # noqa: E402
 
 assert set(EXTRA) == set(_T), set(EXTRA) ^ set(_T)
 TRANSLATIONS = {k: {"de": v[0], "kk": v[1], "ru": EXTRA[k][0], "en": EXTRA[k][1]} for k, v in _T.items()}
+
+# Der Name der Seite wird in jeder Sprache übersetzt (Logo, Seitentitel, Fußzeile).
+BRAND = {lang: TRANSLATIONS["brand"][lang] for lang in LANGS}
+for _key, _texts in TRANSLATIONS.items():
+    if _key != "brand":
+        for _lang in LANGS:
+            _texts[_lang] = _texts[_lang].replace("Waschtermin", BRAND[_lang])
 
 WEEKDAYS = {
     "de": ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],

@@ -144,4 +144,9 @@ check("Alle Schlüssel in allen Sprachen", all(all(l in v and v[l] is not None f
 for code, word in (("de", "Komfortwäsche"), ("kk", "Комфорт жуу"), ("ru", "Комфорт-мойка"), ("en", "Comfort wash")):
     cl = client(); cl.get(f"/sprache/{code}")
     check(f"Beispiel-Leistung auf der Startseite ({code})", word in cl.get("/").text)
+
+for code, name in (("de", "Waschtermin"), ("kk", "Жууға жазылу"), ("ru", "Запись на мойку"), ("en", "Wash Booking")):
+    cl = client(); cl.get(f"/sprache/{code}"); page = cl.get("/anmelden").text
+    check(f"Seitenname ({code})", f"<title>" in page and name in page.split("</title>")[0] and name in page.split("<footer>")[1])
+check("Kein deutscher Name in der englischen Fußzeile", "Waschtermin" not in en.get("/").text.split("<footer>")[1])
 print("\nAlle Tests (inkl. Kasachisch, Russisch, Englisch) bestanden.")
