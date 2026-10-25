@@ -1,25 +1,25 @@
 {% extends "base.html" %}
-{% block title %}Registrieren – Waschtermin{% endblock %}
+{% block title %}{{ t('reg.title') }}{% endblock %}
 {% block content %}
-<h1>{{ 'Waschstraße registrieren' if role == 'wash' else 'Als Autofahrer registrieren' }}</h1>
+<h1>{{ t('reg.h1_wash') if role == 'wash' else t('reg.h1_driver') }}</h1>
 <form method="post" class="form">
   <input type="hidden" name="csrf" value="{{ csrf_token() }}">
-  <label>{{ 'Name der Waschstraße' if role == 'wash' else 'Dein Name' }}
+  <label>{{ t('reg.name_wash') if role == 'wash' else t('reg.name_driver') }}
     <input name="name" required value="{{ form.get('name', '') }}"></label>
-  <label>E-Mail
+  <label>{{ t('f.email') }}
     <input type="email" name="email" required value="{{ form.get('email', '') }}"></label>
-  <label>Passwort (mind. 8 Zeichen)
+  <label>{{ t('reg.password') }}
     <input type="password" name="password" required minlength="8"></label>
   {% if role == 'wash' %}
-    <label>Straße und Hausnummer <input name="street" required value="{{ form.get('street', '') }}"></label>
+    <label>{{ t('f.street_no') }} <input name="street" required value="{{ form.get('street', '') }}"></label>
     <div class="row">
-      <label>PLZ <input name="zip" required value="{{ form.get('zip', '') }}"></label>
-      <label>Ort <input name="city" required value="{{ form.get('city', '') }}"></label>
+      <label>{{ t('f.zip') }} <input name="zip" required value="{{ form.get('zip', '') }}"></label>
+      <label>{{ t('f.city') }} <input name="city" required value="{{ form.get('city', '') }}"></label>
     </div>
-    <label>Beschreibung (optional)
+    <label>{{ t('f.description_opt') }}
       <textarea name="description" rows="3">{{ form.get('description', '') }}</textarea></label>
   {% endif %}
-  <button class="btn">Konto anlegen</button>
-  <p class="muted">Schon registriert? <a href="{{ url_for('login') }}">Anmelden</a></p>
+  <button class="btn">{{ t('reg.submit') }}</button>
+  <p class="muted">{{ t('reg.have_account') }} <a href="{{ url_for('login') }}">{{ t('nav.login') }}</a></p>
 </form>
 {% endblock %}

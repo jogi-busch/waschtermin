@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Anmelden – Waschtermin{% endblock %}
+{% block title %}{{ t('login.title') }}{% endblock %}
 {% block content %}
-<h1>Anmelden</h1>
+<h1>{{ t('nav.login') }}</h1>
 <form method="post" class="form">
   <input type="hidden" name="csrf" value="{{ csrf_token() }}">
-  <label>E-Mail <input type="email" name="email" required autofocus></label>
-  <label>Passwort <input type="password" name="password" required></label>
-  <button class="btn">Anmelden</button>
-  <p class="muted">Noch kein Konto?
-    <a href="{{ url_for('register', role='driver') }}">Autofahrer</a> ·
-    <a href="{{ url_for('register', role='wash') }}">Waschstraße</a></p>
+  <label>{{ t('f.email') }} <input type="email" name="email" required autofocus></label>
+  <label>{{ t('login.password') }} <input type="password" name="password" required></label>
+  <button class="btn">{{ t('nav.login') }}</button>
+  <p class="muted">{{ t('login.no_account') }}
+    <a href="{{ url_for('register', role='driver') }}">{{ t('login.driver') }}</a> ·
+    <a href="{{ url_for('register', role='wash') }}">{{ t('login.wash') }}</a></p>
 </form>
 {% endblock %}

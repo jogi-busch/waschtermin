@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Termin suchen – Waschtermin{% endblock %}
+{% block title %}{{ t('search.title') }}{% endblock %}
 {% block content %}
-<h1>Freie Waschtermine</h1>
+<h1>{{ t('search.h1') }}</h1>
 <form method="get" class="filters">
-  <input name="q" placeholder="Ort, PLZ oder Name" value="{{ q }}">
+  <input name="q" placeholder="{{ t('search.q_ph') }}" value="{{ q }}">
   <input type="date" name="date" min="{{ today }}" value="{{ date }}">
   <select name="service">
-    <option value="">Alle Leistungen</option>
-    {% for s in SERVICES %}<option {{ 'selected' if s == service }}>{{ s }}</option>{% endfor %}
+    <option value="">{{ t('search.all_services') }}</option>
+    {% for s in SERVICES %}<option value="{{ s }}" {{ 'selected' if s == service }}>{{ s | svc }}</option>{% endfor %}
   </select>
-  <button class="btn">Suchen</button>
+  <button class="btn">{{ t('search.btn') }}</button>
 </form>
 
 {% for s in slots %}
@@ -22,13 +22,13 @@
     <h3>{{ s.wash_name }}</h3>
     <p>{{ s.start_time | dt }}</p>
     <p>{{ s.street }}, {{ s.zip }} {{ s.city }}</p>
-    <p>{{ s.service }} · {{ s.duration_min }} Min. · <strong>{{ s.price_cents | euro }}</strong></p>
+    <p>{{ s.service | svc }} · {{ s.duration_min }} {{ t('unit.min') }} · <strong>{{ s.price_cents | euro }}</strong></p>
     {% if s.description %}<p class="muted">{{ s.description }}</p>{% endif %}
   </div>
   <form method="post" action="{{ url_for('book', slot_id=s.id) }}" class="form">
     <input type="hidden" name="csrf" value="{{ csrf_token() }}">
-    <input name="car_note" maxlength="100" placeholder="Kennzeichen (optional)">
-    <button class="btn">Termin buchen</button>
+    <input name="car_note" maxlength="100" placeholder="{{ t('search.plate_ph') }}">
+    <button class="btn">{{ t('search.book') }}</button>
   </form>
 </div>
 {% else %}
@@ -37,7 +37,7 @@
       <circle cx="40" cy="44" r="18" stroke="#0b7a9e" stroke-width="3"/><path d="M53 57l16 16" stroke="#0b7a9e" stroke-width="4" stroke-linecap="round"/>
       <circle cx="88" cy="22" r="7" stroke="#ffb000" stroke-width="3"/><circle cx="102" cy="40" r="4" stroke="#0b7a9e" stroke-width="3" opacity=".5"/>
     </svg>
-    <p>Keine freien Termine gefunden.<br>Probier einen anderen Ort oder ein anderes Datum.</p>
+    <p>{{ t('search.empty1') }}<br>{{ t('search.empty2') }}</p>
   </div>
 {% endfor %}
 {% endblock %}

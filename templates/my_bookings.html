@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Meine Buchungen – Waschtermin{% endblock %}
+{% block title %}{{ t('book.title') }}{% endblock %}
 {% block content %}
-<h1>Meine Buchungen</h1>
+<h1>{{ t('book.h1') }}</h1>
 {% for r in rows %}
 <div class="card slot {{ 'faded' if r.status != 'confirmed' else '' }}">
   <div class="when" aria-hidden="true">
@@ -12,15 +12,15 @@
     <h3>{{ r.wash_name }}</h3>
     <p>{{ r.start_time | dt }}</p>
     <p>{{ r.street }}, {{ r.zip }} {{ r.city }}</p>
-    <p>{{ r.service }} · {{ r.duration_min }} Min. · {{ r.price_cents | euro }}{% if r.car_note %} · {{ r.car_note }}{% endif %}</p>
-    {% if r.status == 'cancelled_by_driver' %}<p class="muted">Von dir storniert</p>
-    {% elif r.status == 'cancelled_by_wash' %}<p class="warn-text">Von der Waschstraße storniert</p>
-    {% elif r.start_time < now %}<p class="muted">Vergangen</p>{% endif %}
+    <p>{{ r.service | svc }} · {{ r.duration_min }} {{ t('unit.min') }} · {{ r.price_cents | euro }}{% if r.car_note %} · {{ r.car_note }}{% endif %}</p>
+    {% if r.status == 'cancelled_by_driver' %}<p class="muted">{{ t('book.by_driver') }}</p>
+    {% elif r.status == 'cancelled_by_wash' %}<p class="warn-text">{{ t('book.by_wash') }}</p>
+    {% elif r.start_time < now %}<p class="muted">{{ t('book.past') }}</p>{% endif %}
   </div>
   {% if r.status == 'confirmed' and r.start_time > now %}
   <form method="post" action="{{ url_for('cancel_booking', booking_id=r.id) }}">
     <input type="hidden" name="csrf" value="{{ csrf_token() }}">
-    <button class="btn small danger">Stornieren</button>
+    <button class="btn small danger">{{ t('book.cancel') }}</button>
   </form>
   {% endif %}
 </div>
@@ -30,7 +30,7 @@
       <rect x="22" y="14" width="76" height="58" rx="10" stroke="#0b7a9e" stroke-width="3"/><path d="M22 30h76M42 8v14M78 8v14" stroke="#0b7a9e" stroke-width="3" stroke-linecap="round"/>
       <circle cx="60" cy="52" r="8" stroke="#ffb000" stroke-width="3"/>
     </svg>
-    <p>Noch keine Buchungen.<br><a href="{{ url_for('search') }}">Freie Termine ansehen</a></p>
+    <p>{{ t('book.none') }}<br><a href="{{ url_for('search') }}">{{ t('book.see_free') }}</a></p>
   </div>
 {% endfor %}
 {% endblock %}

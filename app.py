@@ -9,9 +9,11 @@ import sqlite3
 from datetime import datetime, timedelta
 from functools import wraps
 
-from flask import (Flask, abort, flash, g, redirect, render_template, request,
-                   session, url_for)
+from flask import (Flask, abort, flash, g, has_request_context, redirect, render_template,
+                   request, session, url_for)
 from werkzeug.security import check_password_hash, generate_password_hash
+
+from i18n import LANG_NAMES, LANGS, TRANSLATIONS, WEEKDAYS
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -115,19 +117,42 @@ def parse_dt(value):
 
 @app.template_filter("euro")
 def euro(cents):
+    if g.get("lang") == "en":
+        return f"€{cents / 100:,.2f}"
     return f"{cents / 100:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".") + " €"
+
+
+def tr(key, **kw):
+    """Übersetzt einen Schlüssel in die Sprache der aktuellen Anfrage (Standard: Deutsch)."""
+    lang = g.get("lang", "de") if has_request_context() else "de"
+    entry = TRANSLATIONS[key]
+    text = entry.get(lang) or entry["de"]
+    return text.format(**kw) if kw else text
+
+
+def reset_session():
+    lang = session.get("lang")
+    session.clear()
+    if lang in LANGS:
+        session["lang"] = lang
 
 
 @app.template_filter("dt")
 def fmt_dt(value):
     d = parse_dt(value)
-    tage = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
-    return f"{tage[d.weekday()]}, {d.strftime('%d.%m.%Y')} · {d.strftime('%H:%M')} Uhr"
+    wd = WEEKDAYS[g.get("lang", "de")][d.weekday()]
+    return f"{wd}, {d.strftime('%d.%m.%Y')} · {d.strftime('%H:%M')}{tr('time.suffix')}"
 
 
 @app.template_filter("datefmt")
 def fmt_date(value):
     return datetime.strptime(value[:10], "%Y-%m-%d").strftime("%d.%m.%Y")
+
+
+@app.template_filter("svc")
+def fmt_service(name):
+    key = "svc." + name
+    return tr(key) if key in TRANSLATIONS else name
 
 
 def csrf_token():
@@ -137,13 +162,32 @@ def csrf_token():
 
 
 app.jinja_env.globals["csrf_token"] = csrf_token
+app.jinja_env.globals["t"] = tr
+app.jinja_env.globals["LANG_NAMES"] = LANG_NAMES
 
 
 @app.context_processor
 def inject_hero_photo():
     """Wenn static/hero.jpg existiert, wird sie statt der Illustration im Kopfbereich gezeigt."""
-    return {"hero_photo": os.path.exists(os.path.join(BASE_DIR, "static", "hero.jpg"))}
+    return {"hero_photo": os.path.exists(os.path.join(BASE_DIR, "static", "hero.jpg")),
+            "lang": g.get("lang", "de")}
 app.jinja_env.globals["SERVICES"] = SERVICES
+
+
+@app.before_request
+def set_language_for_request():
+    lang = session.get("lang", "de")
+    g.lang = lang if lang in LANGS else "de"
+
+
+@app.route("/sprache/<code>")
+def set_language(code):
+    if code in LANGS:
+        session["lang"] = code
+    nxt = request.args.get("next", "/")
+    if not nxt.startswith("/") or nxt.startswith("//"):
+        nxt = "/"
+    return redirect(nxt)
 
 
 @app.before_request
@@ -151,7 +195,7 @@ def csrf_protect():
     if request.method == "POST":
         sent = request.form.get("csrf", "")
         if not sent or not secrets.compare_digest(sent, session.get("csrf", "")):
-            abort(400, "Ungültiges Formular-Token. Bitte Seite neu laden.")
+            abort(400, tr("err.csrf"))
 
 
 @app.before_request
@@ -162,7 +206,7 @@ def load_user():
     if uid:
         g.user = get_db().execute("SELECT * FROM users WHERE id = ?", (uid,)).fetchone()
         if g.user is None:
-            session.clear()
+            reset_session()
         elif g.user["role"] == "wash":
             g.wash = get_db().execute(
                 "SELECT * FROM washes WHERE user_id = ?", (uid,)
@@ -182,7 +226,7 @@ def login_required(role=None):
         @wraps(view)
         def wrapped(*a, **kw):
             if g.user is None:
-                flash("Bitte zuerst anmelden.", "error")
+                flash(tr("flash.login_required"), "error")
                 return redirect(url_for("login", next=request.path))
             if role and g.user["role"] != role:
                 abort(403)
@@ -218,19 +262,19 @@ def register(role):
         password = f.get("password", "")
         errors = []
         if "@" not in email or len(email) > 200:
-            errors.append("Bitte eine gültige E-Mail-Adresse angeben.")
+            errors.append(tr("flash.bad_email"))
         if not name:
-            errors.append("Bitte einen Namen angeben.")
+            errors.append(tr("flash.no_name"))
         if len(password) < 8:
-            errors.append("Das Passwort muss mindestens 8 Zeichen lang sein.")
+            errors.append(tr("flash.short_pw"))
         wash_data = {}
         if role == "wash":
             wash_data = {k: f.get(k, "").strip() for k in ("street", "zip", "city", "description")}
             if not (wash_data["street"] and wash_data["zip"] and wash_data["city"]):
-                errors.append("Bitte Straße, PLZ und Ort der Waschstraße angeben.")
+                errors.append(tr("flash.no_address"))
         db = get_db()
         if db.execute("SELECT 1 FROM users WHERE email = ?", (email,)).fetchone():
-            errors.append("Diese E-Mail-Adresse ist bereits registriert.")
+            errors.append(tr("flash.email_taken"))
         if errors:
             for e in errors:
                 flash(e, "error")
@@ -246,9 +290,9 @@ def register(role):
                  wash_data["city"], wash_data["description"]),
             )
         db.commit()
-        session.clear()
+        reset_session()
         session["uid"] = cur.lastrowid
-        flash("Willkommen! Dein Konto wurde angelegt.", "ok")
+        flash(tr("flash.welcome"), "ok")
         return redirect(url_for("wash_subscription" if role == "wash" else "search"))
     return render_template("register.html", role=role, form={})
 
@@ -259,20 +303,20 @@ def login():
         email = request.form.get("email", "").strip().lower()
         user = get_db().execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
         if user and check_password_hash(user["password_hash"], request.form.get("password", "")):
-            session.clear()
+            reset_session()
             session["uid"] = user["id"]
             nxt = request.args.get("next", "")
             if nxt.startswith("/") and not nxt.startswith("//"):
                 return redirect(nxt)
             return redirect(url_for("wash_dashboard" if user["role"] == "wash" else "search"))
-        flash("E-Mail oder Passwort stimmt nicht.", "error")
+        flash(tr("flash.bad_login"), "error")
         return render_template("login.html"), 401
     return render_template("login.html")
 
 
 @app.route("/abmelden", methods=["POST"])
 def logout():
-    session.clear()
+    reset_session()
     return redirect(url_for("index"))
 
 
@@ -310,15 +354,15 @@ def wash_create_slots():
         price = parse_price(f["price"])
         service = f["service"]
     except (KeyError, ValueError):
-        flash("Bitte alle Felder korrekt ausfüllen.", "error")
+        flash(tr("flash.fill_all"), "error")
         return redirect(url_for("wash_dashboard"))
     if service not in SERVICES or not (5 <= duration <= 240):
-        flash("Ungültige Leistung oder Dauer (5–240 Minuten).", "error")
+        flash(tr("flash.bad_service"), "error")
         return redirect(url_for("wash_dashboard"))
     start = day.replace(hour=t_from.hour, minute=t_from.minute)
     end = day.replace(hour=t_to.hour, minute=t_to.minute)
     if end <= start:
-        flash("Das Ende muss nach dem Beginn liegen.", "error")
+        flash(tr("flash.bad_range"), "error")
         return redirect(url_for("wash_dashboard"))
     # Wie viele Waschplätze laufen parallel?
     try:
@@ -339,9 +383,9 @@ def wash_create_slots():
         cur += timedelta(minutes=duration)
     db.commit()
     if created:
-        flash(f"{created} Termin(e) angelegt.", "ok")
+        flash(tr("flash.created", n=created), "ok")
     else:
-        flash("Im gewählten Zeitraum konnten keine Termine angelegt werden (liegt er in der Vergangenheit?).", "error")
+        flash(tr("flash.none_created"), "error")
     return redirect(url_for("wash_dashboard"))
 
 
@@ -363,12 +407,12 @@ def wash_delete_slot(slot_id):
         "SELECT 1 FROM bookings WHERE slot_id = ? AND status = 'confirmed'", (slot_id,)
     ).fetchone()
     if booked:
-        flash("Dieser Termin ist gebucht. Bitte zuerst die Buchung stornieren.", "error")
+        flash(tr("flash.slot_booked"), "error")
     else:
         db.execute("DELETE FROM bookings WHERE slot_id = ?", (slot_id,))
         db.execute("DELETE FROM slots WHERE id = ?", (slot_id,))
         db.commit()
-        flash("Termin gelöscht.", "ok")
+        flash(tr("flash.slot_deleted"), "ok")
     return redirect(url_for("wash_dashboard"))
 
 
@@ -385,7 +429,7 @@ def wash_cancel_booking(booking_id):
         abort(404)
     db.execute("UPDATE bookings SET status = 'cancelled_by_wash' WHERE id = ?", (booking_id,))
     db.commit()
-    flash("Buchung storniert. Der Termin ist wieder frei.", "ok")
+    flash(tr("flash.booking_cancelled_wash"), "ok")
     return redirect(url_for("wash_dashboard"))
 
 
@@ -395,7 +439,7 @@ def wash_profile():
     f = request.form
     vals = {k: f.get(k, "").strip() for k in ("name", "street", "zip", "city", "description")}
     if not all(vals[k] for k in ("name", "street", "zip", "city")):
-        flash("Name, Straße, PLZ und Ort dürfen nicht leer sein.", "error")
+        flash(tr("flash.profile_empty"), "error")
     else:
         db = get_db()
         db.execute(
@@ -403,7 +447,7 @@ def wash_profile():
             (vals["name"], vals["street"], vals["zip"], vals["city"], vals["description"], g.wash["id"]),
         )
         db.commit()
-        flash("Profil gespeichert.", "ok")
+        flash(tr("flash.profile_saved"), "ok")
     return redirect(url_for("wash_dashboard"))
 
 
@@ -428,9 +472,9 @@ def wash_pay():
     `extend_subscription` aufruft.
     """
     if app.config["PAYMENT_MODE"] != "demo":
-        abort(501, "Zahlungsanbieter ist noch nicht angebunden.")
+        abort(501, tr("err.no_payment"))
     extend_subscription(g.wash["id"])
-    flash("Abo für 30 Tage verlängert (Demo-Zahlung).", "ok")
+    flash(tr("flash.sub_extended"), "ok")
     return redirect(url_for("wash_dashboard"))
 
 
@@ -474,7 +518,7 @@ def search():
             sql += " AND substr(s.start_time, 1, 10) = ?"
             params.append(date)
         except ValueError:
-            flash("Ungültiges Datum.", "error")
+            flash(tr("flash.bad_date"), "error")
     if service in SERVICES:
         sql += " AND s.service = ?"
         params.append(service)
@@ -494,7 +538,7 @@ def book(slot_id):
     ).fetchone()
     if (slot is None or slot["start_time"] <= iso(now())
             or not slot["subscription_until"] or parse_dt(slot["subscription_until"]) < now()):
-        flash("Dieser Termin ist nicht mehr verfügbar.", "error")
+        flash(tr("flash.unavailable"), "error")
         return redirect(url_for("search"))
     try:
         db.execute(
@@ -504,9 +548,9 @@ def book(slot_id):
         db.commit()
     except sqlite3.IntegrityError:
         db.rollback()
-        flash("Leider war jemand schneller – dieser Termin ist bereits vergeben.", "error")
+        flash(tr("flash.taken"), "error")
         return redirect(url_for("search"))
-    flash("Termin gebucht!", "ok")
+    flash(tr("flash.booked"), "ok")
     return redirect(url_for("my_bookings"))
 
 
@@ -535,11 +579,11 @@ def cancel_booking(booking_id):
     if row is None:
         abort(404)
     if row["start_time"] <= iso(now()):
-        flash("Vergangene Termine können nicht storniert werden.", "error")
+        flash(tr("flash.past_cancel"), "error")
     else:
         db.execute("UPDATE bookings SET status = 'cancelled_by_driver' WHERE id = ?", (booking_id,))
         db.commit()
-        flash("Termin storniert.", "ok")
+        flash(tr("flash.cancelled"), "ok")
     return redirect(url_for("my_bookings"))
 
 

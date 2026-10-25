@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,19 +21,20 @@
   <nav>
     {% if g.user %}
       {% if g.user.role == 'wash' %}
-        <a href="{{ url_for('wash_dashboard') }}">Meine Termine</a>
-        <a href="{{ url_for('wash_subscription') }}">Abo</a>
+        <a href="{{ url_for('wash_dashboard') }}">{{ t('nav.my_slots') }}</a>
+        <a href="{{ url_for('wash_subscription') }}">{{ t('nav.sub') }}</a>
       {% else %}
-        <a href="{{ url_for('search') }}">Termin suchen</a>
-        <a href="{{ url_for('my_bookings') }}">Meine Buchungen</a>
+        <a href="{{ url_for('search') }}">{{ t('nav.search') }}</a>
+        <a href="{{ url_for('my_bookings') }}">{{ t('nav.my_bookings') }}</a>
       {% endif %}
       <form method="post" action="{{ url_for('logout') }}" class="inline">
         <input type="hidden" name="csrf" value="{{ csrf_token() }}">
-        <button class="link">Abmelden ({{ g.user.name }})</button>
+        <button class="link">{{ t('nav.logout') }} ({{ g.user.name }})</button>
       </form>
     {% else %}
-      <a href="{{ url_for('login') }}">Anmelden</a>
+      <a href="{{ url_for('login') }}">{{ t('nav.login') }}</a>
     {% endif %}
+    <span class="langs">{% for code, name in LANG_NAMES.items() %}<a href="{{ url_for('set_language', code=code, next=request.path) }}"{% if code == lang %} aria-current="true"{% endif %} lang="{{ code }}">{{ name }}</a>{% endfor %}</span>
   </nav>
 </header>
 {% block hero %}{% endblock %}
@@ -43,6 +44,6 @@
   {% endwith %}
   {% block content %}{% endblock %}
 </main>
-<footer>Waschtermin · Prototyp</footer>
+<footer>{{ t('footer') }}</footer>
 </body>
 </html>

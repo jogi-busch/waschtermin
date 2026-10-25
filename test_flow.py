@@ -116,3 +116,28 @@ r = post(driver2, f"/termine/{slot_ids[2]}/buchen")
 check("Abgelaufenes Abo: Buchung abgelehnt", "nicht mehr verfügbar" in r.text)
 
 print("\nAlle Tests bestanden.")
+
+# ---- Kasachisch -------------------------------------------------------------
+kk = client()
+r = kk.get("/sprache/kk?next=/", follow_redirects=True)
+check("Startseite auf Kasachisch", "Бос жуу уақыттары" in r.text and 'lang="kk"' in r.text)
+r = post(kk, "/registrieren/driver", dict(name="Айдар", email="aidar@example.com", password="geheim123"))
+check("Sprache bleibt nach Registrierung", "Уақыт іздеу" in r.text)
+r = post(kk, "/registrieren/driver", dict(name="Айдар", email="aidar@example.com", password="geheim123"))
+check("Kasachische Fehlermeldung", "бұрын тіркелген" in r.text)
+r = kk.get("/meine-termine")
+check("Meine Buchungen auf Kasachisch", "Менің брондарым" in r.text)
+check("Sprachlink wirkt nur auf eigene Pfade", kk.get("/sprache/de?next=//evil.example").headers["Location"] == "/")
+check("Standard bleibt Deutsch", "Freie Waschtermine" in client().get("/").text)
+
+# ---- Russisch / Englisch --------------------------------------------------------
+ru = client(); ru.get("/sprache/ru")
+check("Startseite auf Russisch", "Свободные места на мойку" in ru.get("/").text)
+en = client(); en.get("/sprache/en")
+page = en.get("/").text
+check("Startseite auf Englisch", "Free car wash slots, booked instantly." in page and "€29.00" in page)
+r = post(en, "/registrieren/driver", dict(name="Sam", email="sam@example.com", password="x"))
+check("Englische Fehlermeldung", "at least 8 characters" in r.text)
+from i18n import TRANSLATIONS, LANGS
+check("Alle Schlüssel in allen Sprachen", all(all(l in v and v[l] is not None for l in LANGS) for v in TRANSLATIONS.values()))
+print("\nAlle Tests (inkl. Kasachisch, Russisch, Englisch) bestanden.")
