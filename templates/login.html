@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% from "_art.html" import pagehead %}
 {% block title %}{{ t('login.title') }}{% endblock %}
+{% block hero %}{{ pagehead(t('nav.login'), t('ph.login'), 'key') }}{% endblock %}
 {% block content %}
-<h1>{{ t('nav.login') }}</h1>
-<form method="post" class="form">
+<form method="post" class="form form-card">
   <input type="hidden" name="csrf" value="{{ csrf_token() }}">
-  <label>{{ t('f.email') }} <input type="email" name="email" required autofocus></label>
-  <label>{{ t('login.password') }} <input type="password" name="password" required></label>
+  <label>{{ t('f.email') }} <input type="email" name="email" required autofocus autocomplete="email"></label>
+  <label>{{ t('login.password') }} <input type="password" name="password" required autocomplete="current-password"></label>
   <button class="btn">{{ t('nav.login') }}</button>
   <p class="muted">{{ t('login.no_account') }}
     <a href="{{ url_for('register', role='driver') }}">{{ t('login.driver') }}</a> ·

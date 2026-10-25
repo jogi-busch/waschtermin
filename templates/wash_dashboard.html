@@ -1,12 +1,19 @@
 {% extends "base.html" %}
+{% from "_art.html" import pagehead %}
 {% block title %}{{ t('dash.title') }}{% endblock %}
+{% block hero %}{{ pagehead(g.wash.name, t('ph.dash'), 'calendar') }}{% endblock %}
 {% block content %}
-<h1>{{ g.wash.name }}</h1>
 
 {% if not active %}
   <div class="flash error">{{ t('dash.inactive') }}
     <a href="{{ url_for('wash_subscription') }}">{{ t('dash.activate_now') }}</a></div>
 {% endif %}
+
+<div class="stats">
+  <div class="stat"><span class="ic"><svg><use href="#ico-calendar"/></svg></span><b>{{ slots | rejectattr('booking_id') | list | length }}</b><span>{{ t('dash.stat_free') }}</span></div>
+  <div class="stat"><span class="ic amber"><svg><use href="#ico-check"/></svg></span><b>{{ slots | selectattr('booking_id') | list | length }}</b><span>{{ t('dash.stat_booked') }}</span></div>
+  <div class="stat"><span class="ic green"><svg><use href="#ico-coin"/></svg></span><b>{{ slots | selectattr('booking_id') | sum(attribute='price_cents') | euro }}</b><span>{{ t('dash.stat_revenue') }}</span></div>
+</div>
 
 <div class="card">
   <h2>{{ t('dash.create_h') }}</h2>
@@ -41,8 +48,8 @@
       <td>{{ s.price_cents | euro }}</td>
       <td>
         {% if s.booking_id %}
-          <strong>{{ t('dash.booked') }}</strong> {{ t('dash.booked_by') }} {{ s.driver_name }} ({{ s.driver_email }}){% if s.car_note %} – {{ s.car_note }}{% endif %}
-        {% else %}{{ t('dash.free') }}{% endif %}
+          <span class="chip booked">{{ t('dash.booked') }}</span> {{ t('dash.booked_by') }} {{ s.driver_name }} ({{ s.driver_email }}){% if s.car_note %} – {{ s.car_note }}{% endif %}
+        {% else %}<span class="chip free">{{ t('dash.free') }}</span>{% endif %}
       </td>
       <td>
         {% if s.booking_id %}

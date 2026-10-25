@@ -1,0 +1,8 @@
+{% macro pagehead(title, sub, art) %}
+<section class="pagehead">
+  <div class="pagehead-inner">
+    <div><h1>{{ title }}</h1><p>{{ sub }}</p></div>
+    <svg class="art" viewBox="0 0 220 140" aria-hidden="true"><use href="#art-{{ art }}"/></svg>
+  </div>
+</section>
+{% endmacro %}

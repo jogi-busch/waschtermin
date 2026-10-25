@@ -1,18 +1,27 @@
 {% extends "base.html" %}
+{% from "_art.html" import pagehead %}
 {% block title %}{{ t('sub.title') }}{% endblock %}
+{% block hero %}{{ pagehead(t('sub.h1'), t('ph.sub'), 'card') }}{% endblock %}
 {% block content %}
-<h1>{{ t('sub.h1') }}</h1>
-<div class="card">
-  <p>{{ t('sub.fee') }} <strong>{{ fee | feeprice }}</strong></p>
+<div class="plan">
+  <span class="chip {{ 'ok' if active else 'off' }}">{{ t('sub.status_active') if active else t('sub.status_inactive') }}</span>
+  <p class="plan-label">{{ t('sub.fee') }}</p>
+  <p class="price">{{ fee | feeprice }}<small>{{ t('home.per_month') }}</small></p>
   {% if lang in ('kk', 'ru') %}<p class="muted">{{ t('sub.billed_eur', eur=fee | euro) }}</p>{% endif %}
+
+  <h2>{{ t('sub.feat_h') }}</h2>
+  <ul class="feats">
+    {% for k in ('sub.feat1', 'sub.feat2', 'sub.feat3') %}
+    <li><span class="tick"><svg><use href="#ico-check"/></svg></span>{{ t(k) }}</li>
+    {% endfor %}
+  </ul>
+
   {% if active %}
     <p class="ok-text">{{ t('sub.active', date=g.wash.subscription_until | dt) }}</p>
   {% else %}
     <p class="warn-text">{{ t('sub.inactive') }}</p>
   {% endif %}
-  {% if demo %}
-    <p class="muted">{{ t('sub.demo') }}</p>
-  {% endif %}
+  {% if demo %}<p class="muted">{{ t('sub.demo') }}</p>{% endif %}
   <form method="post" action="{{ url_for('wash_pay') }}">
     <input type="hidden" name="csrf" value="{{ csrf_token() }}">
     <button class="btn">{{ t('sub.extend') if active else t('sub.activate') }}</button>

@@ -173,6 +173,23 @@ _T = {
     "flash.booked": ("Termin gebucht!", "Уақыт брондалды!"),
     "flash.past_cancel": ("Vergangene Termine können nicht storniert werden.", "Өткен уақыттардан бас тартуға болмайды."),
     "flash.cancelled": ("Termin storniert.", "Брон жойылды."),
+    "ph.search": ("Wähle Ort, Datum und Leistung – und buche den passenden Termin.", "Қаланы, күнді және қызметті таңдап, қолайлы уақытты брондаңыз."),
+    "ph.bookings": ("Alle deine Termine auf einen Blick.", "Барлық уақыттарыңыз бір жерде."),
+    "ph.dash": ("Lege freie Zeiten an und behalte deine Buchungen im Blick.", "Бос уақыттарды қосып, брондарыңызды қадағалаңыз."),
+    "ph.sub": ("Ein fester Preis, alles inklusive.", "Бекітілген баға, бәрі қосылған."),
+    "ph.login": ("Willkommen zurück.", "Қайта қош келдіңіз."),
+    "ph.reg_wash": ("Zeig deine freien Zeiten und gewinne neue Kunden.", "Бос уақыттарыңызды көрсетіп, жаңа клиенттер тартыңыз."),
+    "ph.reg_driver": ("Freie Waschtermine finden und mit einem Tipp buchen.", "Бос жуу уақыттарын тауып, бір түрту арқылы брондаңыз."),
+    "sub.feat_h": ("Das ist enthalten", "Не қамтылған"),
+    "sub.feat1": ("Beliebig viele Termine und Waschplätze", "Кез келген санды уақыт пен жуу орны"),
+    "sub.feat2": ("Buchungen und Stornos an einem Ort", "Брондар мен бас тартулар бір жерде"),
+    "sub.feat3": ("Sichtbar für alle Autofahrer in der Suche", "Іздеуде барлық жүргізушілерге көрінеді"),
+    "sub.status_active": ("Aktiv", "Белсенді"),
+    "sub.status_inactive": ("Nicht aktiv", "Белсенді емес"),
+    "dash.stat_free": ("Freie Termine", "Бос уақыттар"),
+    "dash.stat_booked": ("Gebuchte Termine", "Брондалған уақыттар"),
+    "dash.stat_revenue": ("Gebuchter Umsatz", "Брондалған сома"),
+    "book.confirmed": ("Bestätigt", "Расталды"),
 }
 
 from i18n_ru_en import EXTRA  # noqa: E402

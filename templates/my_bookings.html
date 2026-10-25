@@ -1,21 +1,23 @@
 {% extends "base.html" %}
+{% from "_art.html" import pagehead %}
 {% block title %}{{ t('book.title') }}{% endblock %}
+{% block hero %}{{ pagehead(t('book.h1'), t('ph.bookings'), 'ticket') }}{% endblock %}
 {% block content %}
-<h1>{{ t('book.h1') }}</h1>
 {% for r in rows %}
-<div class="card slot {{ 'faded' if r.status != 'confirmed' else '' }}">
+<div class="card slot ticket {{ 'faded' if r.status != 'confirmed' else '' }}">
   <div class="when" aria-hidden="true">
     <b>{{ r.start_time[8:10] }}.{{ r.start_time[5:7] }}.</b>
     <span class="t">{{ r.start_time[11:16] }}</span>
   </div>
   <div class="body">
-    <h3>{{ r.wash_name }}</h3>
-    <p>{{ r.start_time | dt }}</p>
-    <p>{{ r.street }}, {{ r.zip }} {{ r.city }}</p>
-    <p>{{ r.service | svc }} · {{ r.duration_min }} {{ t('unit.min') }} · {{ r.price_cents | euro }}{% if r.car_note %} · {{ r.car_note }}{% endif %}</p>
-    {% if r.status == 'cancelled_by_driver' %}<p class="muted">{{ t('book.by_driver') }}</p>
-    {% elif r.status == 'cancelled_by_wash' %}<p class="warn-text">{{ t('book.by_wash') }}</p>
-    {% elif r.start_time < now %}<p class="muted">{{ t('book.past') }}</p>{% endif %}
+    <h3><span class="avatar"><svg><use href="#ico-wash"/></svg></span>{{ r.wash_name }}
+      {% if r.status == 'cancelled_by_driver' %}<span class="chip cancelled">{{ t('book.by_driver') }}</span>
+      {% elif r.status == 'cancelled_by_wash' %}<span class="chip off">{{ t('book.by_wash') }}</span>
+      {% elif r.start_time < now %}<span class="chip cancelled">{{ t('book.past') }}</span>
+      {% else %}<span class="chip ok">{{ t('book.confirmed') }}</span>{% endif %}</h3>
+    <p class="meta"><svg class="i"><use href="#ico-clock"/></svg>{{ r.start_time | dt }} · {{ r.duration_min }} {{ t('unit.min') }}</p>
+    <p class="meta"><svg class="i"><use href="#ico-pin"/></svg>{{ r.street }}, {{ r.zip }} {{ r.city }}</p>
+    <p class="meta"><svg class="i"><use href="#ico-drop"/></svg>{{ r.service | svc }} <span class="pill">{{ r.price_cents | euro }}</span>{% if r.car_note %}<span class="pill plate">{{ r.car_note }}</span>{% endif %}</p>
   </div>
   {% if r.status == 'confirmed' and r.start_time > now %}
   <form method="post" action="{{ url_for('cancel_booking', booking_id=r.id) }}">

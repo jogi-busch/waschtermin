@@ -1,15 +1,16 @@
 {% extends "base.html" %}
+{% from "_art.html" import pagehead %}
 {% block title %}{{ t('reg.title') }}{% endblock %}
+{% block hero %}{{ pagehead(t('reg.h1_wash') if role == 'wash' else t('reg.h1_driver'), t('ph.reg_wash') if role == 'wash' else t('ph.reg_driver'), 'building' if role == 'wash' else 'wheel') }}{% endblock %}
 {% block content %}
-<h1>{{ t('reg.h1_wash') if role == 'wash' else t('reg.h1_driver') }}</h1>
-<form method="post" class="form">
+<form method="post" class="form form-card">
   <input type="hidden" name="csrf" value="{{ csrf_token() }}">
   <label>{{ t('reg.name_wash') if role == 'wash' else t('reg.name_driver') }}
     <input name="name" required value="{{ form.get('name', '') }}"></label>
   <label>{{ t('f.email') }}
-    <input type="email" name="email" required value="{{ form.get('email', '') }}"></label>
+    <input type="email" name="email" required autocomplete="email" value="{{ form.get('email', '') }}"></label>
   <label>{{ t('reg.password') }}
-    <input type="password" name="password" required minlength="8"></label>
+    <input type="password" name="password" required minlength="8" autocomplete="new-password"></label>
   {% if role == 'wash' %}
     <label>{{ t('f.street_no') }} <input name="street" required value="{{ form.get('street', '') }}"></label>
     <div class="row">

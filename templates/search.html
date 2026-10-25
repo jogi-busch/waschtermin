@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% from "_art.html" import pagehead %}
 {% block title %}{{ t('search.title') }}{% endblock %}
+{% block hero %}{{ pagehead(t('search.h1'), t('ph.search'), 'search') }}{% endblock %}
 {% block content %}
-<h1>{{ t('search.h1') }}</h1>
 <form method="get" class="filters">
   <input name="q" placeholder="{{ t('search.q_ph') }}" value="{{ q }}">
   <input type="date" name="date" min="{{ today }}" value="{{ date }}">
@@ -19,10 +20,10 @@
     <span class="t">{{ s.start_time[11:16] }}</span>
   </div>
   <div class="body">
-    <h3>{{ s.wash_name }}</h3>
-    <p>{{ s.start_time | dt }}</p>
-    <p>{{ s.street }}, {{ s.zip }} {{ s.city }}</p>
-    <p>{{ s.service | svc }} · {{ s.duration_min }} {{ t('unit.min') }} · <strong>{{ s.price_cents | euro }}</strong></p>
+    <h3><span class="avatar"><svg><use href="#ico-wash"/></svg></span>{{ s.wash_name }}</h3>
+    <p class="meta"><svg class="i"><use href="#ico-clock"/></svg>{{ s.start_time | dt }} · {{ s.duration_min }} {{ t('unit.min') }}</p>
+    <p class="meta"><svg class="i"><use href="#ico-pin"/></svg>{{ s.street }}, {{ s.zip }} {{ s.city }}</p>
+    <p class="meta"><svg class="i"><use href="#ico-drop"/></svg>{{ s.service | svc }} <span class="pill">{{ s.price_cents | euro }}</span></p>
     {% if s.description %}<p class="muted">{{ s.description }}</p>{% endif %}
   </div>
   <form method="post" action="{{ url_for('book', slot_id=s.id) }}" class="form">
