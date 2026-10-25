@@ -137,6 +137,12 @@ def csrf_token():
 
 
 app.jinja_env.globals["csrf_token"] = csrf_token
+
+
+@app.context_processor
+def inject_hero_photo():
+    """Wenn static/hero.jpg existiert, wird sie statt der Illustration im Kopfbereich gezeigt."""
+    return {"hero_photo": os.path.exists(os.path.join(BASE_DIR, "static", "hero.jpg"))}
 app.jinja_env.globals["SERVICES"] = SERVICES
 
 

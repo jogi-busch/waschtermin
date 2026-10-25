@@ -1,104 +1,134 @@
 {% extends "base.html" %}
-{% block content %}
-<section class="hero2">
-  <div class="hero2-body">
-  <div class="hero2-text">
-    <h1>Freie Waschtermine, sofort gebucht.</h1>
-    <p>Waschstraßen tragen ihre freien Zeiten ein. Du suchst dir den passenden Termin aus und buchst ihn in Sekunden.</p>
-    <div class="cta">
-      {% if g.user and g.user.role == 'driver' %}
-        <a class="btn" href="{{ url_for('search') }}">Termin suchen</a>
-      {% elif g.user %}
-        <a class="btn" href="{{ url_for('wash_dashboard') }}">Zu meinen Terminen</a>
-      {% else %}
-        <a class="btn" href="{{ url_for('register', role='driver') }}">Termin suchen</a>
-        <a class="btn alt" href="{{ url_for('register', role='wash') }}">Waschstraße anmelden</a>
-      {% endif %}
-    </div>
-  </div>
 
-  <svg class="scene" viewBox="220 20 540 250" role="img" aria-label="Ein Auto fährt in eine Waschstraße, Seifenblasen steigen auf">
-    <!-- Wolken -->
-    <ellipse cx="560" cy="48" rx="54" ry="14" fill="#fff" opacity=".4"/>
-    <ellipse cx="596" cy="38" rx="30" ry="12" fill="#fff" opacity=".4"/>
-    <ellipse cx="690" cy="92" rx="40" ry="10" fill="#fff" opacity=".3"/>
-    <!-- Waschhalle -->
-    <rect x="330" y="70" width="330" height="200" rx="18" fill="#fff"/>
-    <rect x="410" y="82" width="170" height="22" rx="6" fill="#0e2a3b"/>
-    <text x="495" y="98" text-anchor="middle" font-size="13" font-weight="800" fill="#ffb000" font-family="ui-rounded, system-ui, sans-serif" letter-spacing="1">WASCHSTRASSE</text>
-    <rect x="360" y="116" width="270" height="154" rx="10" fill="#0e2a3b"/>
-    <!-- Bürsten -->
-    <g>
-      <rect x="392" y="126" width="26" height="144" rx="10" fill="#ffb000"/>
-      <path d="M392 150H418M392 174H418M392 198H418M392 222H418M392 246H418" stroke="#fff" stroke-width="5" opacity=".85"/>
-      <rect x="572" y="126" width="26" height="144" rx="10" fill="#ffb000"/>
-      <path d="M572 150H598M572 174H598M572 198H598M572 222H598M572 246H598" stroke="#fff" stroke-width="5" opacity=".85"/>
-    </g>
-    <!-- Wasserstrahlen -->
-    <g stroke="#7fd6f0" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 10" opacity=".9">
-      <path d="M470 120V196M495 120V196M520 120V196"/>
-    </g>
-    <!-- Auto -->
-    <g class="drive">
-      <g transform="translate(300 178)">
-        <rect x="0" y="40" width="262" height="36" rx="13" fill="#e8453c"/>
-        <path d="M50 42L72 9Q77 2 86 2H168Q178 2 185 10L214 42Z" fill="#e8453c"/>
-        <path d="M65 39L82 13H117V39ZM125 39V13H166L192 39Z" fill="#cfeefa"/>
-        <rect x="248" y="50" width="14" height="9" rx="3" fill="#ffd966"/>
-        <rect x="0" y="52" width="9" height="8" rx="3" fill="#ffb4a8"/>
-        <rect x="14" y="60" width="234" height="4" rx="2" fill="#b32f28" opacity=".6"/>
-        <circle cx="62" cy="76" r="19" fill="#0e2a3b"/><circle cx="62" cy="76" r="8" fill="#cfd9df"/>
-        <circle cx="204" cy="76" r="19" fill="#0e2a3b"/><circle cx="204" cy="76" r="8" fill="#cfd9df"/>
+{% block hero %}
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1>Freie Waschtermine, sofort gebucht.</h1>
+      <p>Waschstraßen tragen ihre freien Zeiten ein. Du suchst dir den passenden Termin aus und buchst ihn in Sekunden.</p>
+      <div class="cta">
+        {% if g.user and g.user.role == 'driver' %}
+          <a class="btn" href="{{ url_for('search') }}">Termin suchen</a>
+        {% elif g.user %}
+          <a class="btn" href="{{ url_for('wash_dashboard') }}">Zu meinen Terminen</a>
+        {% else %}
+          <a class="btn" href="{{ url_for('register', role='driver') }}">Termin suchen</a>
+          <a class="btn glass" href="{{ url_for('register', role='wash') }}">Waschstraße anmelden</a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if hero_photo %}
+      <div class="hero-photo" style="background-image:url('{{ url_for('static', filename='hero.jpg') }}')" role="img" aria-label="Auto in der Waschstraße"></div>
+    {% else %}
+    <svg class="scene" viewBox="0 0 800 420" role="img" aria-label="Ein rotes Auto fährt abends in eine beleuchtete Waschstraße, Seifenblasen steigen auf">
+      <defs>
+        <linearGradient id="facade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16394d"/><stop offset="1" stop-color="#0a1d29"/></linearGradient>
+        <radialGradient id="glow" cx=".5" cy=".15" r=".9"><stop offset="0" stop-color="#b8f0ff" stop-opacity=".95"/><stop offset=".55" stop-color="#2d9cc4" stop-opacity=".55"/><stop offset="1" stop-color="#08202c" stop-opacity=".9"/></radialGradient>
+        <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a3b4a"/><stop offset="1" stop-color="#050e14"/></linearGradient>
+        <radialGradient id="spill" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#8fe6ff" stop-opacity=".75"/><stop offset="1" stop-color="#8fe6ff" stop-opacity="0"/></radialGradient>
+        <linearGradient id="paint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8576"/><stop offset=".3" stop-color="#e2382d"/><stop offset=".72" stop-color="#a8211a"/><stop offset="1" stop-color="#4f0d0a"/></linearGradient>
+        <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d4f3ff"/><stop offset=".55" stop-color="#5d9bb8"/><stop offset="1" stop-color="#1c4559"/></linearGradient>
+        <radialGradient id="rim" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#f4f7f9"/><stop offset="1" stop-color="#7d8b94"/></radialGradient>
+        <linearGradient id="brush" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#14609a"/><stop offset=".45" stop-color="#5cc0f0"/><stop offset="1" stop-color="#14609a"/></linearGradient>
+        <pattern id="bristle" width="34" height="7" patternUnits="userSpaceOnUse"><path d="M0 3.500H34" stroke="#fff" stroke-opacity=".35" stroke-width="2"/></pattern>
+        <radialGradient id="bubg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".6" stop-color="#bfeaff" stop-opacity=".25"/><stop offset="1" stop-color="#fff" stop-opacity=".5"/></radialGradient>
+        <linearGradient id="fadeg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        <mask id="fade" maskUnits="userSpaceOnUse" x="-100" y="330" width="1000" height="95"><rect x="-100" y="330" width="1000" height="95" fill="url(#fadeg)"/></mask>
+        <filter id="blur6" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+        <filter id="blur2"><feGaussianBlur stdDeviation="2"/></filter>
+        <filter id="neon" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+
+        <g id="car" transform="translate(300 330)">
+          <circle cx="70" cy="-24" r="30" fill="#080d10"/><circle cx="232" cy="-24" r="30" fill="#080d10"/>
+          <path d="M4 -28C2 -50 14 -58 34 -62L70 -70L92 -98Q100 -108 116 -108H186Q204 -108 214 -96L240 -68L272 -62Q296 -56 298 -38L298 -28Q298 -22 290 -22H4Z" fill="url(#paint)"/>
+          <path d="M100 -72L112 -96Q114 -100 120 -100H148V-72ZM156 -72V-100H184Q192 -100 196 -94L214 -72Z" fill="url(#glass)"/>
+          <path d="M104 -74L113 -92Q115 -96 120 -96H134L124 -74Z" fill="#fff" opacity=".35"/>
+          <path d="M30 -56Q150 -66 270 -54" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round" filter="url(#blur2)"/>
+          <path d="M152 -72V-28M96 -66L100 -30" stroke="#3b0907" stroke-opacity=".5" stroke-width="2"/>
+          <rect x="4" y="-30" width="294" height="6" rx="3" fill="#2a0504" opacity=".55"/>
+          <ellipse cx="288" cy="-46" rx="11" ry="6" fill="#fffbe0"/><ellipse cx="292" cy="-46" rx="26" ry="10" fill="#fff6b0" opacity=".45" filter="url(#blur6)"/>
+          <rect x="4" y="-52" width="10" height="8" rx="3" fill="#ff3b30"/><ellipse cx="2" cy="-48" rx="14" ry="8" fill="#ff3b30" opacity=".5" filter="url(#blur6)"/>
+          <g transform="translate(70 -24)"><circle r="24" fill="#10181d"/><circle r="16" fill="url(#rim)"/><path d="M0 -14V14M-12.100 -7L12.100 7M-12.100 7L12.100 -7" stroke="#6f7d86" stroke-width="3"/><circle r="4" fill="#c5ced4"/></g>
+          <g transform="translate(232 -24)"><circle r="24" fill="#10181d"/><circle r="16" fill="url(#rim)"/><path d="M0 -14V14M-12.100 -7L12.100 7M-12.100 7L12.100 -7" stroke="#6f7d86" stroke-width="3"/><circle r="4" fill="#c5ced4"/></g>
+          <g fill="#fff" opacity=".92"><circle cx="130" cy="-110" r="7"/><circle cx="144" cy="-114" r="9"/><circle cx="160" cy="-110" r="7"/><circle cx="174" cy="-108" r="5"/><circle cx="120" cy="-106" r="5"/></g>
+        </g>
+      </defs>
+
+      <!-- Straße, nass -->
+      <rect x="0" y="330" width="800" height="90" fill="url(#road)"/>
+      <ellipse cx="530" cy="352" rx="260" ry="22" fill="url(#spill)"/>
+
+      <!-- Halle -->
+      <rect x="290" y="50" width="480" height="280" rx="22" fill="url(#facade)"/>
+      <rect x="290" y="50" width="480" height="280" rx="22" fill="none" stroke="#2a5d78" stroke-opacity=".6"/>
+      <rect x="430" y="66" width="200" height="36" rx="10" fill="#06121a" stroke="#1f4b63"/>
+      <text x="530" y="91" text-anchor="middle" font-size="19" font-weight="800" fill="#ffc83d" font-family="ui-rounded, system-ui, sans-serif" letter-spacing="2" filter="url(#neon)">WASCHSTRASSE</text>
+      <path d="M330 330V138Q330 118 350 118H710Q730 118 730 138V330Z" fill="#07202d"/>
+      <path d="M330 330V138Q330 118 350 118H710Q730 118 730 138V330Z" fill="url(#glow)"/>
+      <g fill="#e8fbff" filter="url(#neon)"><rect x="380" y="126" width="46" height="5" rx="2.500"/><rect x="450" y="126" width="46" height="5" rx="2.500"/><rect x="520" y="126" width="46" height="5" rx="2.500"/><rect x="590" y="126" width="46" height="5" rx="2.500"/><rect x="660" y="126" width="46" height="5" rx="2.500"/></g>
+      <g stroke="#bff3ff" stroke-width="2.500" stroke-linecap="round" stroke-dasharray="2 9" opacity=".75"><path d="M440 138V300M490 138V300M540 138V300M590 138V300M640 138V300"/></g>
+      <!-- Bürsten -->
+      <rect x="344" y="138" width="36" height="192" rx="14" fill="url(#brush)"/><rect x="344" y="138" width="36" height="192" rx="14" fill="url(#bristle)"/>
+      <rect x="680" y="138" width="36" height="192" rx="14" fill="url(#brush)"/><rect x="680" y="138" width="36" height="192" rx="14" fill="url(#bristle)"/>
+      <g fill="#fff" opacity=".9"><circle cx="352" cy="322" r="9"/><circle cx="368" cy="316" r="11"/><circle cx="384" cy="324" r="8"/><circle cx="690" cy="322" r="9"/><circle cx="706" cy="316" r="11"/><circle cx="722" cy="324" r="8"/></g>
+
+      <!-- Auto mit Spiegelung -->
+      <g class="drive">
+        <ellipse cx="450" cy="333" rx="175" ry="8" fill="#000" opacity=".55" filter="url(#blur6)"/>
+        <g mask="url(#fade)"><use href="#car" transform="translate(0 660) scale(1 -1)" opacity=".3"/></g>
+        <use href="#car"/>
       </g>
-    </g>
-    <!-- Seifenblasen -->
-    <g>
-      <circle class="bub" cx="330" cy="250" r="12" style="animation-delay:0s"/>
-      <circle class="bub" cx="372" cy="214" r="7" style="animation-delay:1.2s"/>
-      <circle class="bub" cx="438" cy="236" r="16" style="animation-delay:2.1s"/>
-      <circle class="bub" cx="500" cy="200" r="9" style="animation-delay:.6s"/>
-      <circle class="bub" cx="548" cy="244" r="13" style="animation-delay:3s"/>
-      <circle class="bub" cx="606" cy="212" r="8" style="animation-delay:1.7s"/>
-      <circle class="bub" cx="660" cy="250" r="14" style="animation-delay:2.6s"/>
-      <circle class="bub" cx="690" cy="200" r="6" style="animation-delay:.3s"/>
-    </g>
-  </svg>
-  </div>
-  <div class="road" aria-hidden="true"></div>
-</section>
 
-<div class="panels">
-  <div class="panel driver">
-    <div class="ico">
-      <svg viewBox="0 0 32 32" fill="none" stroke="#0b7a9e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="14" cy="14" r="8"/><path d="M20 20l7 7"/><path d="M14 9.5s-3 3.2-3 5a3 3 0 0 0 6 0c0-1.800-3-5-3-5z"/>
-      </svg>
-    </div>
+      <!-- Seifenblasen -->
+      <g>
+        <circle class="bub" cx="270" cy="300" r="12" style="animation-delay:0s"/>
+        <circle class="bub" cx="300" cy="250" r="7" style="animation-delay:1.200s"/>
+        <circle class="bub" cx="760" cy="300" r="16" style="animation-delay:2.100s"/>
+        <circle class="bub" cx="640" cy="230" r="9" style="animation-delay:.600s"/>
+        <circle class="bub" cx="520" cy="215" r="13" style="animation-delay:3s"/>
+        <circle class="bub" cx="760" cy="230" r="8" style="animation-delay:1.700s"/>
+        <circle class="bub" cx="420" cy="205" r="10" style="animation-delay:2.600s"/>
+        <circle class="bub" cx="250" cy="220" r="6" style="animation-delay:.300s"/>
+      </g>
+    </svg>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="bento">
+  <section class="tile big">
     <h2>Für Autofahrer</h2>
     <p>Kostenlos. Such freie Termine nach Ort und Datum und buch mit einem Tipp.</p>
-    <a class="btn" href="{{ url_for('register', role='driver') }}">Als Autofahrer registrieren</a>
-  </div>
-  <div class="panel wash">
-    <div class="ico" style="background: rgba(255,176,0,.18)">
-      <svg viewBox="0 0 32 32" fill="none" stroke="#0e2a3b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="4" y="7" width="24" height="21" rx="4"/><path d="M4 14h24M10 4v6M22 4v6"/><path d="M11 21l4 4 7-8"/>
-      </svg>
+    <div class="mock" aria-hidden="true">
+      <div class="mock-label">Beispiel</div>
+      <div class="when"><b>25.10.</b><span class="t">10:30</span></div>
+      <div class="mock-body">
+        <strong>Blitzblank</strong>
+        <span>Komfortwäsche · 30 Min. · 14,50 €</span>
+        <span class="muted">Hauptstr. 1, 65183 Wiesbaden</span>
+      </div>
+      <span class="btn small">Buchen</span>
     </div>
+    <a class="btn" href="{{ url_for('register', role='driver') }}">Als Autofahrer registrieren</a>
+  </section>
+
+  <section class="tile price">
     <h2>Für Waschstraßen</h2>
-    <p>Verwalte alle Termine online an einem Ort. Ein fester Preis: <strong>{{ fee | euro }}</strong> im Monat.</p>
-    <a class="btn alt" href="{{ url_for('register', role='wash') }}">Waschstraße anmelden</a>
-  </div>
-</div>
+    <p class="amount">{{ fee | euro }}<small> im Monat</small></p>
+    <p>Alle Termine online an einem Ort. Ein fester Preis, ohne Aufpreis pro Waschplatz.</p>
+    <a class="btn" href="{{ url_for('register', role='wash') }}">Waschstraße anmelden</a>
+  </section>
 
-<h2 class="section-title">So läuft eine Buchung</h2>
-<ol class="steps">
-  <li><strong>Waschstraße trägt Zeiten ein</strong><span>Mit Leistung, Dauer und Preis – auch für mehrere Waschplätze gleichzeitig.</span></li>
-  <li><strong>Du suchst einen Termin</strong><span>Nach Ort oder Postleitzahl, Datum und Leistung gefiltert.</span></li>
-  <li><strong>Buchen und hinfahren</strong><span>Der Termin gehört dir. Du kannst ihn jederzeit stornieren.</span></li>
-</ol>
-
-<div class="band">
-  <div><strong>{{ fee | euro }} im Monat</strong><p>Alles für die Terminverwaltung deiner Waschstraße.</p></div>
-  <a class="btn" href="{{ url_for('register', role='wash') }}">Jetzt starten</a>
+  <section class="tile wide">
+    <h2>So läuft eine Buchung</h2>
+    <ol class="steps">
+      <li><strong>Waschstraße trägt Zeiten ein</strong><span>Mit Leistung, Dauer und Preis, auch für mehrere Waschplätze gleichzeitig.</span></li>
+      <li><strong>Du suchst einen Termin</strong><span>Nach Ort oder Postleitzahl, Datum und Leistung gefiltert.</span></li>
+      <li><strong>Buchen und hinfahren</strong><span>Der Termin gehört dir. Du kannst ihn jederzeit stornieren.</span></li>
+    </ol>
+  </section>
 </div>
 {% endblock %}
