@@ -29,12 +29,11 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
 )
 
-# Anzeige des Monatsbeitrags in der Währung der Sprache (nur zur Orientierung, abgerechnet wird in Euro).
+# Monatsbeitrag: Deutsch und Englisch in Euro, Kasachisch und Russisch als Näherungswert in Tenge (abgerechnet wird in Euro).
 # Kurse vom 25.10.2026; bei Bedarf hier anpassen: (Zeichen, Einheiten pro 1 EUR, Rundung, Symbol vorne?)
 FEE_CURRENCIES = {
     "kk": ("₸", 505.16, 100, False),
-    "ru": ("₽", 90.28, 10, False),
-    "en": ("$", 1.1202, 1, True),
+    "ru": ("₸", 505.16, 100, False),
 }
 
 SERVICES = ["Basiswäsche", "Komfortwäsche", "Premiumwäsche", "Innenreinigung", "Handwäsche"]
@@ -147,7 +146,7 @@ def reset_session():
 
 @app.template_filter("feeprice")
 def fee_price(cents):
-    """Monatsbeitrag: in Deutsch als Euro, sonst als gerundeter Näherungswert in der Landeswährung."""
+    """Monatsbeitrag: Euro (de, en) oder gerundeter Näherungswert in Tenge (kk, ru)."""
     lang = g.get("lang", "de")
     if lang not in FEE_CURRENCIES:
         return euro(cents)

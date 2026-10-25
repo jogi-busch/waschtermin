@@ -17,7 +17,7 @@ Konfiguration über Umgebungsvariablen:
 |---|---|---|
 | `SECRET_KEY` | `dev-nur-lokal-aendern` | **Im Betrieb zwingend setzen** (langer Zufallswert) |
 | `DATABASE` | `waschtermin.db` | Pfad der SQLite-Datei |
-| `MONTHLY_FEE_CENTS` | `5900` | Monatsbeitrag in Cent (59 €). Abgerechnet wird in Euro; in den Sprachen kk/ru/en wird ein gerundeter Näherungswert in ₸/₽/$ angezeigt (Kurse in `FEE_CURRENCIES` in `app.py`) |
+| `MONTHLY_FEE_CENTS` | `5900` | Monatsbeitrag in Cent (59 €). Abgerechnet wird in Euro; in den Sprachen kk/ru wird ein gerundeter Näherungswert in ₸ (Tenge) angezeigt, in de/en Euro (Kurse in `FEE_CURRENCIES` in `app.py`) |
 | `PAYMENT_MODE` | `demo` | `demo` = Zahlung wird nur simuliert |
 | `PORT` | `5000` | Port |
 

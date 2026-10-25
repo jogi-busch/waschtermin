@@ -9,6 +9,17 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="flag-de" viewBox="0 0 30 20"><rect width="30" height="20" fill="#ffce00"/><rect width="30" height="13.340" fill="#dd0000"/><rect width="30" height="6.670" fill="#000"/></symbol>
+  <symbol id="flag-ru" viewBox="0 0 30 20"><rect width="30" height="20" fill="#d52b1e"/><rect width="30" height="13.340" fill="#0039a6"/><rect width="30" height="6.670" fill="#fff"/></symbol>
+  <symbol id="flag-kk" viewBox="0 0 30 20"><rect width="30" height="20" fill="#00afca"/>
+    <circle cx="15" cy="8" r="3.200" fill="#fec50c"/><circle cx="15" cy="8" r="5.100" fill="none" stroke="#fec50c" stroke-width="1.500" stroke-dasharray="1.100 1.100"/>
+    <path d="M8.500 14.200Q15 10.800 21.500 14.200Q15 12.600 8.500 14.200Z" fill="#fec50c"/>
+    <path d="M0 0H2.600V20H0Z" fill="none"/><g fill="#fec50c"><path d="M1.300 2L2.300 4L1.300 6L.3 4Z"/><path d="M1.300 8L2.300 10L1.300 12L.3 10Z"/><path d="M1.300 14L2.300 16L1.300 18L.3 16Z"/></g></symbol>
+  <symbol id="flag-en" viewBox="0 0 30 20"><rect width="30" height="20" fill="#012169"/>
+    <path d="M0 0L30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0L30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.600"/>
+    <path d="M15 0V20M0 10H30" stroke="#fff" stroke-width="6.500"/><path d="M15 0V20M0 10H30" stroke="#c8102e" stroke-width="3.600"/></symbol>
+</svg>
 <header class="top">
   <a class="brand" href="{{ url_for('index') }}">
     <svg viewBox="0 0 32 32" aria-hidden="true">
@@ -34,7 +45,14 @@
     {% else %}
       <a href="{{ url_for('login') }}">{{ t('nav.login') }}</a>
     {% endif %}
-    <span class="langs">{% for code, name in LANG_NAMES.items() %}<a href="{{ url_for('set_language', code=code, next=request.path) }}"{% if code == lang %} aria-current="true"{% endif %} lang="{{ code }}">{{ name }}</a>{% endfor %}</span>
+    <details class="lang-menu">
+      <summary aria-label="Language"><svg class="flag"><use href="#flag-{{ lang }}"/></svg><span>{{ LANG_NAMES[lang] }}</span></summary>
+      <ul>
+        {% for code, name in LANG_NAMES.items() %}
+        <li><a href="{{ url_for('set_language', code=code, next=request.path) }}" lang="{{ code }}"{% if code == lang %} aria-current="true"{% endif %}><svg class="flag"><use href="#flag-{{ code }}"/></svg>{{ name }}</a></li>
+        {% endfor %}
+      </ul>
+    </details>
   </nav>
 </header>
 {% block hero %}{% endblock %}
@@ -45,5 +63,14 @@
   {% block content %}{% endblock %}
 </main>
 <footer>{{ t('footer') }}</footer>
+<script>
+  // Sprachmenü schließen, wenn außerhalb geklickt wird oder Escape gedrückt wird
+  document.addEventListener("click", function (e) {
+    document.querySelectorAll("details.lang-menu[open]").forEach(function (d) { if (!d.contains(e.target)) d.removeAttribute("open"); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") document.querySelectorAll("details.lang-menu[open]").forEach(function (d) { d.removeAttribute("open"); });
+  });
+</script>
 </body>
 </html>

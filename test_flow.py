@@ -132,12 +132,16 @@ check("Standard bleibt Deutsch", "Freie Waschtermine" in client().get("/").text)
 
 # ---- Russisch / Englisch --------------------------------------------------------
 ru = client(); ru.get("/sprache/ru")
-check("Startseite auf Russisch", "Свободные места на мойку" in ru.get("/").text)
+check("Startseite auf Russisch, Beitrag in Tenge", "Свободные места на мойку" in ru.get("/").text and "≈\u00a029\u00a0800\u00a0₸" in ru.get("/").text)
 en = client(); en.get("/sprache/en")
 page = en.get("/").text
-check("Startseite auf Englisch", "Free car wash slots, booked instantly." in page and "≈\u00a0$66" in page)
+check("Startseite auf Englisch", "Free car wash slots, booked instantly." in page and "€59.00" in page)
 r = post(en, "/registrieren/driver", dict(name="Sam", email="sam@example.com", password="x"))
 check("Englische Fehlermeldung", "at least 8 characters" in r.text)
 from i18n import TRANSLATIONS, LANGS
 check("Alle Schlüssel in allen Sprachen", all(all(l in v and v[l] is not None for l in LANGS) for v in TRANSLATIONS.values()))
+
+for code, word in (("de", "Komfortwäsche"), ("kk", "Комфорт жуу"), ("ru", "Комфорт-мойка"), ("en", "Comfort wash")):
+    cl = client(); cl.get(f"/sprache/{code}")
+    check(f"Beispiel-Leistung auf der Startseite ({code})", word in cl.get("/").text)
 print("\nAlle Tests (inkl. Kasachisch, Russisch, Englisch) bestanden.")

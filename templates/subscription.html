@@ -4,7 +4,7 @@
 <h1>{{ t('sub.h1') }}</h1>
 <div class="card">
   <p>{{ t('sub.fee') }} <strong>{{ fee | feeprice }}</strong></p>
-  {% if lang != 'de' %}<p class="muted">{{ t('sub.billed_eur', eur=fee | euro) }}</p>{% endif %}
+  {% if lang in ('kk', 'ru') %}<p class="muted">{{ t('sub.billed_eur', eur=fee | euro) }}</p>{% endif %}
   {% if active %}
     <p class="ok-text">{{ t('sub.active', date=g.wash.subscription_until | dt) }}</p>
   {% else %}
