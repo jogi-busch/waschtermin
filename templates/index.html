@@ -1,19 +1,104 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="hero">
-  <h1>Freie Waschtermine, sofort gebucht.</h1>
-  <p>Waschstraßen veröffentlichen ihre freien Zeiten, Autofahrer suchen und buchen – alles an einem Ort.</p>
+<section class="hero2">
+  <div class="hero2-body">
+  <div class="hero2-text">
+    <h1>Freie Waschtermine, sofort gebucht.</h1>
+    <p>Waschstraßen tragen ihre freien Zeiten ein. Du suchst dir den passenden Termin aus und buchst ihn in Sekunden.</p>
+    <div class="cta">
+      {% if g.user and g.user.role == 'driver' %}
+        <a class="btn" href="{{ url_for('search') }}">Termin suchen</a>
+      {% elif g.user %}
+        <a class="btn" href="{{ url_for('wash_dashboard') }}">Zu meinen Terminen</a>
+      {% else %}
+        <a class="btn" href="{{ url_for('register', role='driver') }}">Termin suchen</a>
+        <a class="btn alt" href="{{ url_for('register', role='wash') }}">Waschstraße anmelden</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <svg class="scene" viewBox="220 20 540 250" role="img" aria-label="Ein Auto fährt in eine Waschstraße, Seifenblasen steigen auf">
+    <!-- Wolken -->
+    <ellipse cx="560" cy="48" rx="54" ry="14" fill="#fff" opacity=".4"/>
+    <ellipse cx="596" cy="38" rx="30" ry="12" fill="#fff" opacity=".4"/>
+    <ellipse cx="690" cy="92" rx="40" ry="10" fill="#fff" opacity=".3"/>
+    <!-- Waschhalle -->
+    <rect x="330" y="70" width="330" height="200" rx="18" fill="#fff"/>
+    <rect x="410" y="82" width="170" height="22" rx="6" fill="#0e2a3b"/>
+    <text x="495" y="98" text-anchor="middle" font-size="13" font-weight="800" fill="#ffb000" font-family="ui-rounded, system-ui, sans-serif" letter-spacing="1">WASCHSTRASSE</text>
+    <rect x="360" y="116" width="270" height="154" rx="10" fill="#0e2a3b"/>
+    <!-- Bürsten -->
+    <g>
+      <rect x="392" y="126" width="26" height="144" rx="10" fill="#ffb000"/>
+      <path d="M392 150H418M392 174H418M392 198H418M392 222H418M392 246H418" stroke="#fff" stroke-width="5" opacity=".85"/>
+      <rect x="572" y="126" width="26" height="144" rx="10" fill="#ffb000"/>
+      <path d="M572 150H598M572 174H598M572 198H598M572 222H598M572 246H598" stroke="#fff" stroke-width="5" opacity=".85"/>
+    </g>
+    <!-- Wasserstrahlen -->
+    <g stroke="#7fd6f0" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 10" opacity=".9">
+      <path d="M470 120V196M495 120V196M520 120V196"/>
+    </g>
+    <!-- Auto -->
+    <g class="drive">
+      <g transform="translate(300 178)">
+        <rect x="0" y="40" width="262" height="36" rx="13" fill="#e8453c"/>
+        <path d="M50 42L72 9Q77 2 86 2H168Q178 2 185 10L214 42Z" fill="#e8453c"/>
+        <path d="M65 39L82 13H117V39ZM125 39V13H166L192 39Z" fill="#cfeefa"/>
+        <rect x="248" y="50" width="14" height="9" rx="3" fill="#ffd966"/>
+        <rect x="0" y="52" width="9" height="8" rx="3" fill="#ffb4a8"/>
+        <rect x="14" y="60" width="234" height="4" rx="2" fill="#b32f28" opacity=".6"/>
+        <circle cx="62" cy="76" r="19" fill="#0e2a3b"/><circle cx="62" cy="76" r="8" fill="#cfd9df"/>
+        <circle cx="204" cy="76" r="19" fill="#0e2a3b"/><circle cx="204" cy="76" r="8" fill="#cfd9df"/>
+      </g>
+    </g>
+    <!-- Seifenblasen -->
+    <g>
+      <circle class="bub" cx="330" cy="250" r="12" style="animation-delay:0s"/>
+      <circle class="bub" cx="372" cy="214" r="7" style="animation-delay:1.2s"/>
+      <circle class="bub" cx="438" cy="236" r="16" style="animation-delay:2.1s"/>
+      <circle class="bub" cx="500" cy="200" r="9" style="animation-delay:.6s"/>
+      <circle class="bub" cx="548" cy="244" r="13" style="animation-delay:3s"/>
+      <circle class="bub" cx="606" cy="212" r="8" style="animation-delay:1.7s"/>
+      <circle class="bub" cx="660" cy="250" r="14" style="animation-delay:2.6s"/>
+      <circle class="bub" cx="690" cy="200" r="6" style="animation-delay:.3s"/>
+    </g>
+  </svg>
+  </div>
+  <div class="road" aria-hidden="true"></div>
 </section>
-<div class="cards two">
-  <div class="card">
+
+<div class="panels">
+  <div class="panel driver">
+    <div class="ico">
+      <svg viewBox="0 0 32 32" fill="none" stroke="#0b7a9e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="14" cy="14" r="8"/><path d="M20 20l7 7"/><path d="M14 9.5s-3 3.2-3 5a3 3 0 0 0 6 0c0-1.800-3-5-3-5z"/>
+      </svg>
+    </div>
     <h2>Für Autofahrer</h2>
-    <p>Kostenlos. Suche freie Termine in deiner Nähe und buche mit einem Klick.</p>
+    <p>Kostenlos. Such freie Termine nach Ort und Datum und buch mit einem Tipp.</p>
     <a class="btn" href="{{ url_for('register', role='driver') }}">Als Autofahrer registrieren</a>
   </div>
-  <div class="card">
+  <div class="panel wash">
+    <div class="ico" style="background: rgba(255,176,0,.18)">
+      <svg viewBox="0 0 32 32" fill="none" stroke="#0e2a3b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="4" y="7" width="24" height="21" rx="4"/><path d="M4 14h24M10 4v6M22 4v6"/><path d="M11 21l4 4 7-8"/>
+      </svg>
+    </div>
     <h2>Für Waschstraßen</h2>
-    <p>Verwalte deine Termine komplett online. Monatlicher Beitrag: <strong>{{ fee | euro }}</strong>.</p>
-    <a class="btn" href="{{ url_for('register', role='wash') }}">Waschstraße anmelden</a>
+    <p>Verwalte alle Termine online an einem Ort. Ein fester Preis: <strong>{{ fee | euro }}</strong> im Monat.</p>
+    <a class="btn alt" href="{{ url_for('register', role='wash') }}">Waschstraße anmelden</a>
   </div>
+</div>
+
+<h2 class="section-title">So läuft eine Buchung</h2>
+<ol class="steps">
+  <li><strong>Waschstraße trägt Zeiten ein</strong><span>Mit Leistung, Dauer und Preis – auch für mehrere Waschplätze gleichzeitig.</span></li>
+  <li><strong>Du suchst einen Termin</strong><span>Nach Ort oder Postleitzahl, Datum und Leistung gefiltert.</span></li>
+  <li><strong>Buchen und hinfahren</strong><span>Der Termin gehört dir. Du kannst ihn jederzeit stornieren.</span></li>
+</ol>
+
+<div class="band">
+  <div><strong>{{ fee | euro }} im Monat</strong><p>Alles für die Terminverwaltung deiner Waschstraße.</p></div>
+  <a class="btn" href="{{ url_for('register', role='wash') }}">Jetzt starten</a>
 </div>
 {% endblock %}

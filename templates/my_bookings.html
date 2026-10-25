@@ -4,9 +4,14 @@
 <h1>Meine Buchungen</h1>
 {% for r in rows %}
 <div class="card slot {{ 'faded' if r.status != 'confirmed' else '' }}">
-  <div>
-    <h3>{{ r.start_time | dt }}</h3>
-    <p><strong>{{ r.wash_name }}</strong> · {{ r.street }}, {{ r.zip }} {{ r.city }}</p>
+  <div class="when" aria-hidden="true">
+    <b>{{ r.start_time[8:10] }}.{{ r.start_time[5:7] }}.</b>
+    <span class="t">{{ r.start_time[11:16] }}</span>
+  </div>
+  <div class="body">
+    <h3>{{ r.wash_name }}</h3>
+    <p>{{ r.start_time | dt }}</p>
+    <p>{{ r.street }}, {{ r.zip }} {{ r.city }}</p>
     <p>{{ r.service }} · {{ r.duration_min }} Min. · {{ r.price_cents | euro }}{% if r.car_note %} · {{ r.car_note }}{% endif %}</p>
     {% if r.status == 'cancelled_by_driver' %}<p class="muted">Von dir storniert</p>
     {% elif r.status == 'cancelled_by_wash' %}<p class="warn-text">Von der Waschstraße storniert</p>
@@ -20,6 +25,12 @@
   {% endif %}
 </div>
 {% else %}
-  <p class="muted">Noch keine Buchungen. <a href="{{ url_for('search') }}">Jetzt Termin suchen</a></p>
+  <div class="empty">
+    <svg viewBox="0 0 120 80" fill="none" aria-hidden="true">
+      <rect x="22" y="14" width="76" height="58" rx="10" stroke="#0b7a9e" stroke-width="3"/><path d="M22 30h76M42 8v14M78 8v14" stroke="#0b7a9e" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="60" cy="52" r="8" stroke="#ffb000" stroke-width="3"/>
+    </svg>
+    <p>Noch keine Buchungen.<br><a href="{{ url_for('search') }}">Freie Termine ansehen</a></p>
+  </div>
 {% endfor %}
 {% endblock %}
